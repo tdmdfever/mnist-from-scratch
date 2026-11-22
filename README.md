@@ -1,0 +1,1 @@
+Goal: digit recognition network for Kaggle submission
