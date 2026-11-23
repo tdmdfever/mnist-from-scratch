@@ -48,11 +48,17 @@ def test_split_reproducibility(train_data):
     X, y = train_data
     _, _, X_train1, X_val1, y_train1, y_val1 = split_data(X, y, seed=42)
     _, _, X_train2, X_val2, y_train2, y_val2 = split_data(X, y, seed=42)
+    _, _, X_train3, X_val3, y_train3, y_val3 = split_data(X, y, seed=0)
 
     assert np.array_equal(X_train1, X_train2), "X_train should be the same for the same seed"
     assert np.array_equal(y_train1, y_train2), "y_train should be the same for the same seed"
     assert np.array_equal(X_val1, X_val2), "X_val should be the same for the same seed"
     assert np.array_equal(y_val1, y_val2), "y_val should be the same for the same seed"
+    assert not np.array_equal(X_train1, X_train3), "X_train should not be the same for different seeds"
+    assert not np.array_equal(y_train1, y_train3), "y_train should not be the same for different seeds"
+    assert not np.array_equal(X_val1, X_val3), "X_val should not be the same for different seeds"
+    assert not np.array_equal(y_val1, y_val3), "y_val should not be the same for different seeds"
+
 
 def test_one_hot_encoding(train_data):
     X, y = train_data

@@ -38,5 +38,5 @@ def split_data(X, y, n_val=5000, seed=0):
 
 def one_hot(y):
     """Convert a 1D array of labels (0-9) to one-hot encoded 2D array (m, 10)."""
-    I = np.eye(10)
-    return I[y.astype(int)]
+    identity = np.eye(10)
+    return identity[y.astype(int)]

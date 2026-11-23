@@ -1,7 +1,7 @@
 import numpy as np
 
 def init_params(n_features=784, n_classes=10):
-    """Initialize weights and biases for a softmax classifier."""
+    """Initialize weights W (n_features, n_classes) and biases b (1, n_classes) for a softmax classifier."""
     W = np.zeros((n_features, n_classes))
     b = np.zeros((1, n_classes))
     return {'W': W, 'b': b}
@@ -17,7 +17,6 @@ def softmax(Z):
 
     Subtracts each row's max first: exp overflows past ~709, and shifting doesn't change the result.
     """
-
     row_max = Z.max(axis=1, keepdims=True)
     Z_shifted = Z - row_max
     E = np.exp(Z_shifted)
