@@ -6,7 +6,9 @@ from src.softmax import init_params, softmax, forward, cross_entropy, gradients,
 @pytest.fixture(scope="module")
 def small_batch():
     X, y = load_train()
-    return X[:256], one_hot(y[:256])
+    X_small_batch = X[:256]
+    Y_small_batch = one_hot(y[:256])
+    return X_small_batch, Y_small_batch
 
 def test_softmax_rows_sum_to_one():
     Z1 = np.array([[1., 2., 3.],
@@ -50,12 +52,11 @@ def test_uniform_prediction_loss_ln_ten():
 def test_gradient_shapes_match_params(small_batch):
     X, Y = small_batch
     params = init_params()
-    W = params['W']
-    b = params['b']
     P = forward(X, params)
     grads = gradients(X, P, Y)
-    dW, db = grads['W'], grads['b']
-    assert dW.shape == W.shape and db.shape == b.shape, "gradient shapes should match parameter shapes"
+
+    for key in params:
+            assert grads[key].shape == params[key].shape, "gradient shapes should match parameter shapes"
 
 def test_loss_decreases(small_batch):
     X, Y = small_batch
