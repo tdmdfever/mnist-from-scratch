@@ -1,7 +1,10 @@
 import numpy as np
 
-def init_params(n_features=784, n_classes=10):
-    """Initialize weights W (n_features, n_classes) and biases b (1, n_classes) for a softmax classifier."""
+def init_params(n_features=784, n_classes=10, seed=None):
+    """Initialize weights W (n_features, n_classes) and biases b (1, n_classes) for a softmax classifier.
+
+    `seed` is unused; here so models share one interface
+    """
     W = np.zeros((n_features, n_classes))
     b = np.zeros((1, n_classes))
     params = {'W': W, 'b': b}
@@ -29,7 +32,8 @@ def forward(X, params):
     """Compute the softmax probabilities for input X given parameters."""
     Z = score(X, params)
     P = softmax(Z)
-    return P
+    cache = {"X": X, "P": P}
+    return P, cache
 
 def cross_entropy(P, Y):
     """Compute mean cross-entropy over the batch. P, Y: (m, 10).
@@ -39,11 +43,14 @@ def cross_entropy(P, Y):
     loss = -(Y * np.log(P + 1e-12)).sum(axis=1).mean()
     return loss
 
-def gradients(X, P, Y):
+def backward(params, cache, Y):
     """Compute gradients of the loss with respect to W and b.
 
     From the derivation: G = dL/dZ = (P - Y)/m, so dW = X^T @ G and db = column sums of G
+    `params` is unused; here so models share one interface.
     """
+    X = cache["X"]
+    P = cache["P"]
     m = len(X)
     G = (P - Y)/m
     dW = X.T @ G
@@ -58,7 +65,7 @@ def update(params, grads, lr=0.1):
 
 def predict(X, params):
     """Predict class labels for input X given parameters. Returns the index of the max probability for each sample."""
-    P = forward(X, params)
+    P, _ = forward(X, params)
     pred = P.argmax(axis=1)
     return pred
 

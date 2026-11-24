@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from src.data import load_train, one_hot
-from src.softmax import init_params, softmax, forward, cross_entropy, gradients, update, predict, accuracy
+from src.softmax import init_params, softmax, forward, cross_entropy, backward, update, predict, accuracy
 
 @pytest.fixture(scope="module")
 def small_batch():
@@ -52,20 +52,20 @@ def test_uniform_prediction_loss_ln_ten():
 def test_gradient_shapes_match_params(small_batch):
     X, Y = small_batch
     params = init_params()
-    P = forward(X, params)
-    grads = gradients(X, P, Y)
+    P, cache = forward(X, params)
+    grads = backward(params, cache, Y)
 
     for key in params:
-            assert grads[key].shape == params[key].shape, "gradient shapes should match parameter shapes"
+        assert grads[key].shape == params[key].shape, "gradient shapes should match parameter shapes"
 
 def test_loss_decreases(small_batch):
     X, Y = small_batch
     params = init_params()
-    P = forward(X, params)
+    P, cache = forward(X, params)
     loss1 = cross_entropy(P, Y)
-    grads = gradients(X, P, Y)
+    grads = backward(params, cache, Y)
     update(params, grads)
-    new_P = forward(X, params)
+    new_P, _ = forward(X, params)
     loss2 = cross_entropy(new_P, Y)
     assert loss2 < loss1, "loss should decrease after one update"
 

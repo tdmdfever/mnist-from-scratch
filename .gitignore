@@ -1,6 +1,6 @@
 .venv/
 data/
-submissions/
+runs/
 __pycache__/
 .pytest_cache/
 .DS_Store
