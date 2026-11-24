@@ -7,11 +7,12 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
-RUN_DIR = ROOT / "runs"
+RES_DIR = ROOT / "results"
+LRS_DIR = RES_DIR / "lr_sweep"
 FIG_DIR = ROOT / "figures"
 
 def load_runs(commit):
-    run_paths = list(RUN_DIR.glob("*_mlp"))
+    run_paths = list(LRS_DIR.glob("*_mlp"))
     runs = {}
 
     for path in run_paths:
@@ -48,6 +49,9 @@ def plot_accuracy(commit, runs, path, title):
         acc_ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         acc_ax.grid(alpha=0.3)
         acc_ax.spines[["top", "right"]].set_visible(False)
+        acc_ax.axhline(0.907, color="gray", linestyle="--", linewidth=1)
+        acc_ax.text(8, 0.900, "softmax accuracy (0.907)", va="top", fontsize=8, color="gray")
+
 
     for empty_ax in acc_axes.flat[n:]:
         empty_ax.set_visible(False)
@@ -79,6 +83,10 @@ def plot_loss(commit, runs, path, title):
     loss_fig.suptitle(title)
     loss_fig.text(0.99, 0.01, f"runs @ {commit}", ha="right", fontsize=8, color="gray")
 
+    loss_ax.axhline(np.log(10), color="gray", linestyle="--", linewidth=1)
+    loss_ax.text(1, np.log(10), " random guessing (ln 10)", va="bottom", fontsize=8, color="gray")
+
+
     loss_fig.tight_layout()
     loss_fig.savefig(path, dpi=150)
     plt.close(loss_fig)
@@ -92,8 +100,8 @@ def main():
     args = parse_args()
     commit = args.commit
     runs = load_runs(commit)
-    plot_accuracy(commit, runs, FIG_DIR / "lr_sweep_accuracy.png", "")
-    plot_loss(commit, runs, FIG_DIR / "lr_sweep_loss.png", "")
+    plot_accuracy(commit, runs, FIG_DIR / "lr_sweep_accuracy.png", "Above lr=0.3, training collapses mid-run and recovers; final accuracies near-tie")
+    plot_loss(commit, runs, FIG_DIR / "lr_sweep_loss.png", "Higher learning rates lower loss faster;\nat 0.5 and 1.0 it spikes back to about random guessing")
 
 if __name__ == "__main__":
     main()
