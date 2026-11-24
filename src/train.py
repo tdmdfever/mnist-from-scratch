@@ -49,6 +49,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", choices=list(MODELS), default="mlp")
     parser.add_argument("--epochs", type=int, default=15)
+    parser.add_argument("--lr", type=float, default=0.1)
     args = parser.parse_args()
     return args
 
@@ -67,7 +68,7 @@ def main():
     model = MODELS[model_name]
 
     n_epochs = args.epochs
-    lr = 0.1
+    lr = args.lr
     batch_size = 128
 
     data_shuffle_seed = 0
