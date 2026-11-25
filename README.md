@@ -43,7 +43,7 @@ Kaggle's [Digit Recognizer](#kaggle) uses MNIST ([LeCun et al., 1998](#lecun)):
   ![Softmax regression gradient, derived by hand](docs/derivation_softmax.jpg)
   ![Two-layer network backpropagation, derived by hand](docs/derivation_mlp.jpg)
 
-- **Gradient check:** For five randomly chosen entries of each parameter array: nudges each entry by ±0.00001 to compute slope directly with finite difference, compares it with gradient returned by `backward()`. Maximum relative error: 3.3 × 10⁻⁹.
+- **Gradient check:** For five randomly chosen entries of each parameter array: nudges each entry by ±10⁻⁵ to compute slope directly with finite difference, compares it with gradient returned by `backward()`. Maximum relative error: 3.3 × 10⁻⁹.
 - **Tests:** 22 tests, run with `python -m pytest -v`:
   - Data (scaling, shapes, a non-overlapping split that spans the training set, reproducibility, one-hot encoding)
   - Softmax (rows sum to 1, overflow guard, shift invariance, uniform loss = ln 10, one-step loss decreases)
@@ -144,12 +144,18 @@ python -m src.train --model mlp --lr 0.3
 Each run creates `runs/<timestamp>_<model>/` with `config.json`, `history.json`
 and `submission.csv` (the file to upload to Kaggle).
 
-**Reproduce the learning-rate sweep**
+**Redraw the plots from the saved numbers**
+
+```bash
+python -m src.plot_lr_sweep --commit bcceb44
+```
+
+**Reproduce the learning-rate sweep from scratch**
 ```bash
 for lr in 0.01 0.03 0.1 0.3 0.5 1.0; do
     python -m src.train --model mlp --lr $lr
 done
-python -m src.plot_lr_sweep --commit $(git describe --always --dirty)
+python -m src.plot_lr_sweep --runs-dir runs --commit $(git describe --always --dirty)
 ```
 Results are identical on the same machine; on others, the last digits may differ.
 
