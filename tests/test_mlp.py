@@ -1,8 +1,10 @@
-import pytest
 import numpy as np
+import pytest
+
 from src.data import load_train, one_hot
-from src.softmax import cross_entropy
 from src.mlp import init_params, forward, backward
+from src.softmax import cross_entropy
+
 
 @pytest.fixture(scope="module")
 def small_batch():
@@ -10,6 +12,7 @@ def small_batch():
     X_small_batch = X[:10]
     Y_small_batch = one_hot(y[:10])
     return X_small_batch, Y_small_batch
+
 
 def test_backward_matches_finite_difference(small_batch):
     # Gradient check: for 5 random entries of each parameter, nudge the entry by +h and -h,
@@ -21,7 +24,7 @@ def test_backward_matches_finite_difference(small_batch):
     grads = backward(params, cache, Y)
 
     rng = np.random.default_rng(0)
-    h = 0.00001
+    h = 1e-5
     errors = []
     for key in params:
         for _ in range(5):
@@ -47,6 +50,7 @@ def test_backward_matches_finite_difference(small_batch):
     # Use np.max(), not max(); Python's max() skips nan, so a nan gradient would pass.
     assert np.max(errors) < 1e-6
 
+
 def test_gradient_shapes_match_params(small_batch):
     X, Y = small_batch
     params = init_params()
@@ -54,7 +58,8 @@ def test_gradient_shapes_match_params(small_batch):
     grads = backward(params, cache, Y)
 
     for key in params:
-        assert grads[key].shape == params[key].shape, "gradient shapes should match parameter shapes"
+        assert grads[key].shape == params[key].shape
+
 
 def test_he_initialization():
     params = init_params()
