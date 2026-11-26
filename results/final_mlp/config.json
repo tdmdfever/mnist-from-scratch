@@ -1,0 +1,13 @@
+{
+  "model": "mlp",
+  "epochs": 15,
+  "lr": 0.3,
+  "batch_size": 128,
+  "seeds": {
+    "data_shuffle": 0,
+    "init_params": 0,
+    "epoch_shuffle": 0
+  },
+  "commit": "4457a5c",
+  "runtime_seconds": 7.851674
+}

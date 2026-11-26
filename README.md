@@ -11,7 +11,7 @@ A handwritten-digit classifier built with no ML libraries: every gradient derive
 | MLP, 128 hidden units | lr 0.3, 15 epochs | 0.9738 | 0.97275 |
 
 Gradient check: backpropagation matches finite differences to a maximum relative
-error of 3.3 × 10⁻⁹.
+error of 3.3 × 10⁻⁹. Trained weights: results/final_mlp/ (config, history, params.npz). It's the sweep's lr 0.3 run, reproduced exactly from a later commit. Exported and rounded to 5 decimals for the web demo, the weights give the same prediction on all 5,000 validation images.
 
 ## Data
 
@@ -185,6 +185,7 @@ Results are identical on the same machine; on others, the last digits may differ
 ├── data/                         not in the repo; put the Kaggle CSVs here
 ├── runs/                         not in the repo; created when you train
 ├── results/                      experiment results
+│   ├── final_mlp/                the trained model: config, history, weights
 │   └── lr_sweep/                 the raw numbers behind the figures
 ├── figures/                      the figures in this README
 ├── docs/                         the by-hand derivations in this README
