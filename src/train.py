@@ -128,6 +128,7 @@ def main():
     folder_path = RUN_DIR / f"{stamp}_{model_name}"
     folder_path.mkdir(parents=True, exist_ok=True)
 
+    np.savez(folder_path / "params.npz", **params)
     with open(folder_path / "config.json", "w") as f:
         json.dump(config, f, indent=2)
     with open(folder_path / "history.json", "w") as f:
