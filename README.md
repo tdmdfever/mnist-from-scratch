@@ -44,11 +44,12 @@ Kaggle's [Digit Recognizer](#kaggle) uses MNIST ([LeCun et al., 1998](#lecun)):
   ![Two-layer network backpropagation, derived by hand](docs/derivation_mlp.jpg)
 
 - **Gradient check:** For five randomly chosen entries of each parameter array: nudges each entry by ±10⁻⁵ to compute slope directly with finite difference, compares it with gradient returned by `backward()`. Maximum relative error: 3.3 × 10⁻⁹.
-- **Tests:** 22 tests, run with `python -m pytest -v`:
+- **Tests:** 23 tests, run with `python -m pytest -v`:
   - Data (scaling, shapes, a non-overlapping split that spans the training set, reproducibility, one-hot encoding)
   - Softmax (rows sum to 1, overflow guard, shift invariance, uniform loss = ln 10, one-step loss decreases)
   - MLP (gradient check, gradient shapes, He scale)
   - Submission (matches sample format, preserves label order)
+  - Model export (exported parameters within 5 × 10⁻⁶ of original)
 
 ## Experiment: learning-rate sweep
 
@@ -141,8 +142,14 @@ python -m pytest -v
 python -m src.train --model softmax --epochs 10
 python -m src.train --model mlp --lr 0.3
 ```
-Each run creates `runs/<timestamp>_<model>/` with `config.json`, `history.json`
+Each run creates `runs/<timestamp>_<model>/` with `config.json`, `history.json`, `params.npz`,
 and `submission.csv` (the file to upload to Kaggle).
+
+**Export trained model to JSON**
+```bash
+python -m src.export_weights --run runs/<timestamp>_mlp
+```
+using any run made by the current `train.py`. Writes `params.json` next to `params.npz` in that folder.
 
 **Redraw the plots from the saved numbers**
 
@@ -163,23 +170,25 @@ Results are identical on the same machine; on others, the last digits may differ
 
 ```text
 ├── src/
-│   ├── data.py             loading, scaling, train/validation split, one-hot
-│   ├── softmax.py          softmax regression (baseline)
-│   ├── mlp.py              two-layer network: init, forward, backward
-│   ├── train.py            training loop, run records, Kaggle submission
-│   └── plot_lr_sweep.py    the sweep's figures
-├── tests/                  pytest suite
+│   ├── data.py                   loading, scaling, train/validation split, one-hot
+│   ├── softmax.py                softmax regression (baseline)
+│   ├── mlp.py                    two-layer network: init, forward, backward
+│   ├── train.py                  training loop, run records, Kaggle submission
+│   ├── plot_lr_sweep.py          the sweep's figures
+│   └── export_weights.py         exporting trained model to JSON
+├── tests/                        pytest suite
 │   ├── test_data.py
 │   ├── test_softmax.py
 │   ├── test_mlp.py
-│   └── test_train.py
-├── data/                   not in the repo; put the Kaggle CSVs here
-├── runs/                   not in the repo; created when you train
-├── results/
-│   └── lr_sweep/           the raw numbers behind the figures
-├── figures/                the figures in this README
-├── docs/                   the by-hand derivations in this README
-├── notebooks/              scratch exploration; made sample-digits figure
+│   ├── test_train.py
+│   └── test_export_weights.py
+├── data/                         not in the repo; put the Kaggle CSVs here
+├── runs/                         not in the repo; created when you train
+├── results/                      experiment results
+│   └── lr_sweep/                 the raw numbers behind the figures
+├── figures/                      the figures in this README
+├── docs/                         the by-hand derivations in this README
+├── notebooks/                    scratch exploration; made sample-digits figure
 ├── requirements.txt
 └── pytest.ini
 ```
